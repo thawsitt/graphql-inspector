@@ -4,10 +4,10 @@ import {
   GraphQLField,
   GraphQLInterfaceType,
 } from 'graphql';
-import {inspect} from 'util';
 
 import {Change, CriticalityLevel, ChangeType} from './change';
 import {safeChangeForInputValue} from '../../utils/graphql';
+import {safeString} from '../../utils/string';
 
 export function fieldArgumentDescriptionChanged(
   type: GraphQLObjectType | GraphQLInterfaceType,
@@ -40,17 +40,18 @@ export function fieldArgumentDefaultChanged(
     type: ChangeType.FieldArgumentDefaultChanged,
     message:
       typeof oldArg.defaultValue === 'undefined'
-        ? `Default value '${safeString(newArg.defaultValue)}' was added to argument '${newArg.name}' on field '${type.name}.${field.name}'`
-        : `Default value for argument '${newArg.name}' on field '${type.name}.${field.name}' changed from '${safeString(oldArg.defaultValue)}' to '${safeString(newArg.defaultValue)}'`,
+        ? `Default value '${safeString(
+            newArg.defaultValue,
+          )}' was added to argument '${newArg.name}' on field '${type.name}.${
+            field.name
+          }'`
+        : `Default value for argument '${newArg.name}' on field '${type.name}.${
+            field.name
+          }' changed from '${safeString(oldArg.defaultValue)}' to '${safeString(
+            newArg.defaultValue,
+          )}'`,
     path: [type.name, field.name, oldArg.name].join('.'),
   };
-}
-
-function safeString(obj: any) {
-if (obj != null && typeof obj.toString === 'function') {
-    return `${obj}`
-  }
-  return inspect(obj, { depth: null })
 }
 
 export function fieldArgumentTypeChanged(
